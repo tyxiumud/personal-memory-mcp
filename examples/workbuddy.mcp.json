@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "personal_memory": {
+      "command": "__PERSONAL_MEMORY_PYTHON__",
+      "args": [
+        "-m",
+        "personal_memory",
+        "serve"
+      ],
+      "env": {
+        "PERSONAL_MEMORY_DB": "__PERSONAL_MEMORY_DATABASE__",
+        "PYTHONUTF8": "1"
+      }
+    }
+  }
+}
