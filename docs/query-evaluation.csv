@@ -1,0 +1,3 @@
+time,client,query,scope,scope_id,returned_ids,useful_ids,missing_information,notes
+YYYY-MM-DD,client-name,"数据库+[SQLite,FTS5]",project,project:example,record-001,record-001,none,Replace with a real manual evaluation result; do not include memory content or personal identifiers
+YYYY-MM-DD,client-name,"不存在的事实+[编号]",global,,none,none,specific attribute not recorded,An empty result is valid and must not be rewritten as a remembered fact

@@ -1,0 +1,1292 @@
+{
+  "notice": "Synthetic evaluation fixture. Contains no real personal data and is never loaded into the production database. set=tuning holds the v0.2 cases that query_variants and RRF were designed against; set=development holds cases that shaped the v0.3 fallback (A01 drove the unusable-fragment rule), so it is not held out; set=validation holds cases written after the v0.3 fallback was frozen and are reported as validation only, never as blind held-out.",
+  "memories": [
+    {
+      "id": "eval-career-0001",
+      "title": "职业背景：星河实验室的数字 IC 工程师（虚构）",
+      "content": "虚构人物小林是一名数字 IC 设计工程师，在星河实验室从事传感器接口设计工作，主要研究低功耗电路。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "profile",
+      "confidence": 0.9,
+      "importance": 0.95,
+      "source": {
+        "kind": "synthetic_fixture",
+        "date": "2026-09-10",
+        "evidence": "独立编写的虚构样例，不代表实际用户经历"
+      },
+      "tags": [
+        "career",
+        "digital-ic",
+        "fictional-lab"
+      ]
+    },
+    {
+      "id": "eval-invest-0002",
+      "title": "投资背景与分析偏好：长期稳健、红利与指数",
+      "content": "用户投资风格偏长期稳健，主要关注红利与指数基金，重视回撤控制，不做短线交易。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.85,
+      "importance": 0.9,
+      "source": {
+        "kind": "conversation",
+        "client": "codex",
+        "date": "2026-09-08",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "investment",
+        "dividend",
+        "index-fund"
+      ]
+    },
+    {
+      "id": "eval-learning-0003",
+      "title": "学习与技术交流：体系化、第一性原理和图示",
+      "content": "用户喜欢从底层原理逐层拆解，重视推导过程与设计权衡，偏好用图示和结构化知识讲解复杂概念，并维护 Obsidian 笔记。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.85,
+      "importance": 0.85,
+      "source": {
+        "kind": "conversation",
+        "client": "workbuddy",
+        "date": "2026-09-07",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "learning",
+        "first-principles",
+        "obsidian"
+      ]
+    },
+    {
+      "id": "eval-writing-0004",
+      "title": "写作风格偏好：先结论后推导",
+      "content": "用户希望技术回答先给结论，再解释推导过程和权衡依据，避免只堆结论。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.8,
+      "importance": 0.7,
+      "source": {
+        "kind": "conversation",
+        "client": "codex",
+        "date": "2026-09-05",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "writing",
+        "communication"
+      ]
+    },
+    {
+      "id": "eval-tooling-0005",
+      "title": "工具偏好：轻量本地脚本与 CLI",
+      "content": "用户偏好轻量本地工具和命令行工作流，倾向 Python 脚本而不是重型框架，也关注二次开发成本。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.8,
+      "importance": 0.7,
+      "source": {
+        "kind": "conversation",
+        "client": "codex",
+        "date": "2026-09-04",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "tooling",
+        "cli",
+        "python"
+      ]
+    },
+    {
+      "id": "eval-schedule-0006",
+      "title": "工作节奏偏好：上午做深度设计",
+      "content": "用户习惯把深度设计和阅读安排在上午，下午处理沟通与杂务。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.7,
+      "importance": 0.6,
+      "source": {
+        "kind": "conversation",
+        "client": "workbuddy",
+        "date": "2026-09-03",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "schedule",
+        "habits"
+      ]
+    },
+    {
+      "id": "eval-project-0007",
+      "title": "项目进度：Personal Memory MCP v0.2 检索改进",
+      "content": "当前阶段为 Personal Memory MCP v0.2：增加多路关键词检索与紧凑上下文，已完成数据库备份，正在实现 RRF 合并。",
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "type": "episodic",
+      "confidence": 0.95,
+      "importance": 0.9,
+      "source": {
+        "kind": "implementation",
+        "client": "deepseek-harness",
+        "date": "2026-09-10",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "personal-memory",
+        "v0.2",
+        "progress"
+      ]
+    },
+    {
+      "id": "eval-project-0008",
+      "title": "项目决定：不做向量检索，先做关键词融合",
+      "content": "v0.2 决定不引入向量数据库或外部模型 API，先用客户端提取关键词加后端 RRF 合并的方案，等真实试用数据再评估。",
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "type": "decision",
+      "confidence": 0.95,
+      "importance": 0.85,
+      "source": {
+        "kind": "decision",
+        "client": "codex",
+        "date": "2026-09-10",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "personal-memory",
+        "v0.2",
+        "decision"
+      ]
+    },
+    {
+      "id": "eval-project-0009",
+      "title": "项目阻塞：Codex 钩子改动需要重新信任",
+      "content": "修改 Codex 钩子脚本后哈希变化，新会话需要重新审查并信任 UserPromptSubmit 与 Stop 两个命令钩子。",
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "type": "episodic",
+      "confidence": 0.9,
+      "importance": 0.7,
+      "source": {
+        "kind": "implementation",
+        "client": "codex",
+        "date": "2026-09-10",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "personal-memory",
+        "codex-hooks",
+        "blocker"
+      ]
+    },
+    {
+      "id": "eval-other-0010",
+      "title": "其他项目：烘焙配方整理",
+      "content": "另一个项目在整理面包烘焙配方与发酵温度记录，与记忆服务无关。",
+      "scope": "project",
+      "scope_id": "project:baking",
+      "type": "episodic",
+      "confidence": 0.8,
+      "importance": 0.5,
+      "source": {
+        "kind": "conversation",
+        "client": "workbuddy",
+        "date": "2026-09-02",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "baking"
+      ]
+    },
+    {
+      "id": "eval-domain-0011",
+      "title": "领域笔记：数字 IC 时序收敛基础",
+      "content": "数字 IC 时序收敛包含建立时间、保持时间和时钟树综合等基础概念，用户希望整理成可复习的文档。",
+      "scope": "domain",
+      "scope_id": "learning:electronics",
+      "type": "fact",
+      "confidence": 0.8,
+      "importance": 0.6,
+      "source": {
+        "kind": "file",
+        "client": "codex",
+        "date": "2026-09-01",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "digital-ic",
+        "timing"
+      ]
+    },
+    {
+      "id": "eval-forgotten-0012",
+      "title": "已遗忘样例：过期的旅行计划",
+      "content": "这条记录用于验证软删除过滤，正文提到稳健与红利等词以避免误命中。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "episodic",
+      "confidence": 0.5,
+      "importance": 0.5,
+      "source": {
+        "kind": "conversation",
+        "client": "codex",
+        "date": "2026-08-01",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "forgotten-sample"
+      ],
+      "forgotten": true
+    },
+    {
+      "id": "eval-expired-0013",
+      "title": "已过期样例：旧的工作安排",
+      "content": "这条记录的有效期已经结束，正文提到职业与工作以验证有效期过滤。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "episodic",
+      "confidence": 0.5,
+      "importance": 0.5,
+      "valid_from": "2020-01-01T00:00:00Z",
+      "valid_to": "2020-06-01T00:00:00Z",
+      "source": {
+        "kind": "conversation",
+        "client": "codex",
+        "date": "2020-01-01",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "expired-sample"
+      ]
+    },
+    {
+      "id": "eval-mixed-0014",
+      "title": "开发环境偏好：VS Code 配 uv 管理虚拟环境（虚构）",
+      "content": "虚构用户在本机使用 VS Code 编辑 Python 项目，用 uv 管理虚拟环境与依赖，笔记放在 Obsidian 仓库里。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.85,
+      "importance": 0.8,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "tooling",
+        "python"
+      ]
+    },
+    {
+      "id": "eval-english-0015",
+      "title": "Tooling preference: lightweight local CLI scripts",
+      "content": "The fictional user prefers lightweight local command line tools and Python scripts over heavy frameworks, and avoids hosted services.",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.85,
+      "importance": 0.8,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "tooling",
+        "cli"
+      ]
+    },
+    {
+      "id": "eval-titleonly-0016",
+      "title": "通勤方式：地铁加共享单车（虚构）",
+      "content": "虚构人物每天骑车到站点再换乘两站，单程大约四十分钟，偶尔步行回家。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "fact",
+      "confidence": 0.9,
+      "importance": 0.6,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例：正文刻意不使用标题词"
+      },
+      "tags": [
+        "commute"
+      ]
+    },
+    {
+      "id": "eval-other-0017",
+      "title": "其他项目：阳台种植记录（虚构）",
+      "content": "另一个项目在记录番茄与香草的浇水周期，和记忆服务无关。",
+      "scope": "project",
+      "scope_id": "project:gardening",
+      "type": "episodic",
+      "confidence": 0.9,
+      "importance": 0.5,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "gardening"
+      ]
+    },
+    {
+      "id": "eval-expired-0018",
+      "title": "已过期样例：旧的健身计划（虚构）",
+      "content": "这条记录的有效期已经结束，正文提到游泳与健身以验证有效期过滤。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "episodic",
+      "confidence": 0.9,
+      "importance": 0.5,
+      "valid_from": "2020-01-01T00:00:00Z",
+      "valid_to": "2020-06-01T00:00:00Z",
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "fitness"
+      ]
+    },
+    {
+      "id": "eval-forgotten-0019",
+      "title": "已遗忘样例：旧的联系方式（虚构）",
+      "content": "这条记录用于验证软删除过滤，正文提到游泳与健身以免误命中。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "episodic",
+      "confidence": 0.9,
+      "importance": 0.5,
+      "forgotten": true,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "fitness"
+      ]
+    },
+    {
+      "id": "eval-health-0020",
+      "title": "健康习惯：每周三次有氧（虚构）",
+      "content": "虚构用户每周安排三次有氧运动，包括游泳与力量训练，重视恢复与睡眠。",
+      "scope": "global",
+      "scope_id": null,
+      "type": "preference",
+      "confidence": 0.85,
+      "importance": 0.7,
+      "source": {
+        "kind": "synthetic_fixture",
+        "evidence": "合成样例"
+      },
+      "tags": [
+        "health"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "question": "我是做什么工作的",
+      "query": "职业",
+      "query_variants": [
+        "数字 IC",
+        "工作"
+      ],
+      "relevant": [
+        "eval-career-0001"
+      ],
+      "unexpected": [
+        "eval-other-0010",
+        "eval-forgotten-0012",
+        "eval-expired-0013"
+      ],
+      "notes": "变体“工作”可能带回工具与作息偏好；非相关记录计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "职业",
+      "set": "tuning"
+    },
+    {
+      "id": "C02",
+      "question": "我在星河实验室做什么工作",
+      "query": "星河实验室",
+      "query_variants": [],
+      "relevant": [
+        "eval-career-0001"
+      ],
+      "unexpected": [
+        "eval-other-0010",
+        "eval-forgotten-0012"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "职业",
+      "set": "tuning"
+    },
+    {
+      "id": "C03",
+      "question": "我的投资偏好是什么",
+      "query": "投资偏好",
+      "query_variants": [
+        "稳健",
+        "红利"
+      ],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0012",
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "投资偏好",
+      "set": "tuning"
+    },
+    {
+      "id": "C04",
+      "question": "我的投资风格是什么",
+      "query": "投资",
+      "query_variants": [
+        "稳健",
+        "红利"
+      ],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0012"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "投资偏好",
+      "set": "tuning"
+    },
+    {
+      "id": "C05",
+      "question": "我关注哪些基金",
+      "query": "红利",
+      "query_variants": [
+        "指数"
+      ],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0012"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "投资偏好",
+      "set": "tuning"
+    },
+    {
+      "id": "C06",
+      "question": "我平时怎么学习",
+      "query": "学习",
+      "query_variants": [],
+      "relevant": [
+        "eval-learning-0003"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "技术学习",
+      "set": "tuning"
+    },
+    {
+      "id": "C07",
+      "question": "我维护笔记的习惯",
+      "query": "Obsidian",
+      "query_variants": [
+        "笔记"
+      ],
+      "relevant": [
+        "eval-learning-0003"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "技术学习",
+      "set": "tuning"
+    },
+    {
+      "id": "C08",
+      "question": "解释复杂概念时我偏好什么形式",
+      "query": "图示",
+      "query_variants": [
+        "结构化"
+      ],
+      "relevant": [
+        "eval-learning-0003"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "技术学习",
+      "set": "tuning"
+    },
+    {
+      "id": "C09",
+      "question": "我对回答结构有什么要求",
+      "query": "写作风格",
+      "query_variants": [
+        "结论",
+        "推导"
+      ],
+      "relevant": [
+        "eval-writing-0004",
+        "eval-learning-0003"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "技术学习",
+      "set": "tuning"
+    },
+    {
+      "id": "C10",
+      "question": "我喜欢用什么工具",
+      "query": "工具",
+      "query_variants": [
+        "CLI",
+        "Python"
+      ],
+      "relevant": [
+        "eval-tooling-0005"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "技术学习",
+      "set": "tuning"
+    },
+    {
+      "id": "C11",
+      "question": "我什么时候做深度设计",
+      "query": "深度设计",
+      "query_variants": [
+        "上午"
+      ],
+      "relevant": [
+        "eval-schedule-0006"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "同义表达",
+      "set": "tuning"
+    },
+    {
+      "id": "C12",
+      "question": "这个项目现在做到哪了",
+      "query": "进度",
+      "query_variants": [
+        "v0.2",
+        "RRF"
+      ],
+      "relevant": [
+        "eval-project-0007",
+        "eval-project-0008"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "group": "项目进度",
+      "set": "tuning"
+    },
+    {
+      "id": "C13",
+      "question": "为什么不做向量检索",
+      "query": "向量",
+      "query_variants": [
+        "关键词"
+      ],
+      "relevant": [
+        "eval-project-0008",
+        "eval-project-0007"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "group": "项目进度",
+      "set": "tuning"
+    },
+    {
+      "id": "C14",
+      "question": "当前有什么阻塞",
+      "query": "阻塞",
+      "query_variants": [
+        "钩子",
+        "信任"
+      ],
+      "relevant": [
+        "eval-project-0009"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "group": "项目进度",
+      "set": "tuning"
+    },
+    {
+      "id": "C15",
+      "question": "我的汽车是什么型号",
+      "query": "汽车",
+      "query_variants": [
+        "型号",
+        "车牌"
+      ],
+      "relevant": [],
+      "unexpected": [
+        "eval-career-0001",
+        "eval-invest-0002",
+        "eval-learning-0003",
+        "eval-project-0007"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "未知事实",
+      "set": "tuning"
+    },
+    {
+      "id": "C16",
+      "question": "我的社保缴纳基数是多少",
+      "query": "社保",
+      "query_variants": [
+        "缴纳",
+        "基数"
+      ],
+      "relevant": [],
+      "unexpected": [
+        "eval-career-0001",
+        "eval-invest-0002"
+      ],
+      "scope": "global",
+      "scope_id": null,
+      "group": "未知事实",
+      "set": "tuning"
+    },
+    {
+      "id": "C17",
+      "question": "烘焙项目现在有哪些配方",
+      "query": "烘焙",
+      "query_variants": [
+        "配方"
+      ],
+      "relevant": [
+        "eval-other-0010"
+      ],
+      "unexpected": [
+        "eval-project-0007",
+        "eval-project-0008"
+      ],
+      "scope": "project",
+      "scope_id": "project:baking",
+      "group": "范围隔离",
+      "set": "tuning"
+    },
+    {
+      "id": "C18",
+      "question": "记忆项目的进度会不会被别的项目看到",
+      "query": "进度",
+      "query_variants": [
+        "记忆"
+      ],
+      "relevant": [
+        "eval-project-0007"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "project",
+      "scope_id": "project:personal-memory",
+      "group": "范围隔离",
+      "set": "tuning"
+    },
+    {
+      "id": "C19",
+      "question": "时序收敛有哪些基础概念",
+      "query": "时序收敛",
+      "query_variants": [
+        "建立时间",
+        "保持时间"
+      ],
+      "relevant": [
+        "eval-domain-0011"
+      ],
+      "unexpected": [
+        "eval-other-0010"
+      ],
+      "scope": "domain",
+      "scope_id": "learning:electronics",
+      "group": "同义表达",
+      "set": "tuning"
+    },
+    {
+      "id": "C20",
+      "question": "我以前的工作安排是什么",
+      "query": "工作安排",
+      "query_variants": [
+        "职业"
+      ],
+      "relevant": [
+        "eval-career-0001"
+      ],
+      "unexpected": [
+        "eval-expired-0013",
+        "eval-forgotten-0012"
+      ],
+      "notes": "过期与软删除样例都不能返回；变体命中当前职业记录属于合理结果。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "范围隔离",
+      "set": "tuning"
+    },
+    {
+      "id": "A01",
+      "question": "我的投资偏好是什么",
+      "query": "投资偏好",
+      "query_variants": [],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "两个词在正文里不相邻：严格 AND 会归零，宽松回退应能召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "投资偏好",
+      "set": "development"
+    },
+    {
+      "id": "A02",
+      "question": "我的投资偏好是什么",
+      "query": "投资 偏好",
+      "query_variants": [],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "同一组词加空格即可命中：说明问题在查询侧拼接，不在索引。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "投资偏好",
+      "set": "development"
+    },
+    {
+      "id": "A03",
+      "question": "我平时用什么工具",
+      "query": "我平时用什么工具",
+      "query_variants": [],
+      "relevant": [
+        "eval-tooling-0005"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010"
+      ],
+      "notes": "完整自然语言问句，客户端未拆分关键词。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "自然语言",
+      "set": "development"
+    },
+    {
+      "id": "A04",
+      "question": "Which editor does the user use",
+      "query": "editor",
+      "query_variants": [],
+      "relevant": [
+        "eval-mixed-0014"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "英文单词查询。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "英文",
+      "set": "development"
+    },
+    {
+      "id": "A05",
+      "question": "What tooling does the user prefer",
+      "query": "local scripting tools",
+      "query_variants": [],
+      "relevant": [
+        "eval-english-0015"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "英文改写：scripting 未出现，严格 AND 归零。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "英文",
+      "set": "development"
+    },
+    {
+      "id": "A06",
+      "question": "我用什么编辑器写代码",
+      "query": "VS Code",
+      "query_variants": [
+        "笔记"
+      ],
+      "relevant": [
+        "eval-mixed-0014"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "中英混合查询。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "混合",
+      "set": "development"
+    },
+    {
+      "id": "A07",
+      "question": "我怎么通勤",
+      "query": "通勤",
+      "query_variants": [],
+      "relevant": [
+        "eval-titleonly-0016"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "标题相关、正文措辞不同：只能通过标题命中。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "标题相关",
+      "set": "development"
+    },
+    {
+      "id": "A08",
+      "question": "我的宠物叫什么名字",
+      "query": "宠物",
+      "query_variants": [
+        "名字"
+      ],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "真正没有答案：任何返回都算误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "无答案",
+      "set": "development"
+    },
+    {
+      "id": "A09",
+      "question": "我的邮政编码是什么",
+      "query": "我的邮政编码是什么",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "含我的/什么等通用片段的无关查询，用于检验通用片段规则。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "无答案",
+      "set": "development"
+    },
+    {
+      "id": "A10",
+      "question": "我该怎么做饭",
+      "query": "我该怎么做饭",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "含怎么的无关查询，宽松回退不得因此捞回无关记录。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "无答案",
+      "set": "development"
+    },
+    {
+      "id": "A11",
+      "question": "种植项目现在浇水的安排",
+      "query": "浇水",
+      "query_variants": [],
+      "relevant": [
+        "eval-other-0017"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "其他项目范围内可命中。",
+      "scope": "project",
+      "scope_id": "project:gardening",
+      "group": "范围隔离",
+      "set": "development"
+    },
+    {
+      "id": "A12",
+      "question": "默认范围下能否看到别的项目",
+      "query": "浇水",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [
+        "eval-other-0017",
+        "eval-other-0010"
+      ],
+      "notes": "全局范围不得泄露其他项目记录，无答案即为正确。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "范围隔离",
+      "set": "development"
+    },
+    {
+      "id": "A13",
+      "question": "我的游泳安排",
+      "query": "游泳",
+      "query_variants": [],
+      "relevant": [
+        "eval-health-0020"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "已过期与已遗忘记录正文同样含该词，必须被过滤。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "有效期与软删除",
+      "set": "development"
+    },
+    {
+      "id": "A14",
+      "question": "我的健身计划",
+      "query": "健身",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018"
+      ],
+      "notes": "该词只出现在已过期与已遗忘记录中，正确答案是空。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "有效期与软删除",
+      "set": "development"
+    },
+    {
+      "id": "V01",
+      "question": "请问一下你还记不记得我之前向你描述过的个人投资偏好是什么",
+      "query": "请问一下你还记不记得我之前向你描述过的个人投资偏好是什么",
+      "query_variants": [],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，核心词在末尾。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V02",
+      "question": "请问一下你还记不记得我之前描述过的投资偏好是什么",
+      "query": "请问一下你还记不记得我之前描述过的投资偏好是什么",
+      "query_variants": [],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，核心词在中部。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V03",
+      "question": "投资偏好请问一下你还记得我之前描述过的内容吗",
+      "query": "投资偏好请问一下你还记得我之前描述过的内容吗",
+      "query_variants": [],
+      "relevant": [
+        "eval-invest-0002"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，核心词在开头。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V04",
+      "question": "你之前是不是跟我聊过我在星河实验室做的职业背景",
+      "query": "你之前是不是跟我聊过我在星河实验室做的职业背景",
+      "query_variants": [],
+      "relevant": [
+        "eval-career-0001"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，专有名词在末尾。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V05",
+      "question": "我想确认一下我之前有没有说过我平时用什么工具来写脚本",
+      "query": "我想确认一下我之前有没有说过我平时用什么工具来写脚本",
+      "query_variants": [],
+      "relevant": [
+        "eval-tooling-0005"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，口语化前提。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V06",
+      "question": "你还记得我之前说过我平时是怎么学习以及怎么做笔记的吗",
+      "query": "你还记得我之前说过我平时是怎么学习以及怎么做笔记的吗",
+      "query_variants": [],
+      "relevant": [
+        "eval-learning-0003"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，两个核心词。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V07",
+      "question": "can you remind me what command line tooling I said I prefer",
+      "query": "can you remind me what command line tooling I said I prefer",
+      "query_variants": [],
+      "relevant": [
+        "eval-english-0015"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "英文长问句。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V08",
+      "question": "我记得我之前提过用 VS Code 和 uv 做开发环境，你还记得吗",
+      "query": "我记得我之前提过用 VS Code 和 uv 做开发环境，你还记得吗",
+      "query_variants": [],
+      "relevant": [
+        "eval-mixed-0014"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "中英混合长问句。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V09",
+      "question": "我之前跟你说过我平时是怎么通勤的吗",
+      "query": "我之前跟你说过我平时是怎么通勤的吗",
+      "query_variants": [],
+      "relevant": [
+        "eval-titleonly-0016"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "核心词只出现在标题。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V10",
+      "question": "你还记得我之前说过我每周安排几次有氧运动吗",
+      "query": "你还记得我之前说过我每周安排几次有氧运动吗",
+      "query_variants": [],
+      "relevant": [
+        "eval-health-0020"
+      ],
+      "unexpected": [
+        "eval-forgotten-0019",
+        "eval-expired-0018",
+        "eval-other-0010",
+        "eval-other-0017"
+      ],
+      "notes": "长问句，核心词分散在正文。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后长问句",
+      "set": "validation"
+    },
+    {
+      "id": "V11",
+      "question": "请问你还记不记得我跟你说过我的汽车是什么型号吗",
+      "query": "请问你还记不记得我跟你说过我的汽车是什么型号吗",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    },
+    {
+      "id": "V12",
+      "question": "我之前有没有跟你提过我的护照号码",
+      "query": "我之前有没有跟你提过我的护照号码",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    },
+    {
+      "id": "V13",
+      "question": "你还记得我养的是什么宠物吗",
+      "query": "你还记得我养的是什么宠物吗",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    },
+    {
+      "id": "V14",
+      "question": "我跟你说过我的社保缴纳基数吗",
+      "query": "我跟你说过我的社保缴纳基数吗",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    },
+    {
+      "id": "V15",
+      "question": "你还记得我上次说的那个菜谱吗",
+      "query": "你还记得我上次说的那个菜谱吗",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    },
+    {
+      "id": "V16",
+      "question": "我之前跟你说过我的投资账户密码吗",
+      "query": "我之前跟你说过我的投资账户密码吗",
+      "query_variants": [],
+      "relevant": [],
+      "unexpected": [],
+      "notes": "无答案负例：任何返回都计入误召回。",
+      "scope": "global",
+      "scope_id": null,
+      "group": "冻结后无答案",
+      "set": "validation"
+    }
+  ]
+}

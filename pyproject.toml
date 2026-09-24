@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "personal-memory-mcp"
+version = "0.3.1"
+description = "Local, model-independent personal memory with SQLite and MCP"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = ["mcp>=1.26,<2", "pydantic>=2.12,<3"]
+keywords = ["mcp", "memory", "sqlite", "ai-agents", "local-first"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Database",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.scripts]
+personal-memory = "personal_memory.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/personal_memory"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1", "pyyaml>=6,<7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"

@@ -1,0 +1,31 @@
+{
+  "description": "Inject Personal Memory policy and require one end-of-turn memory review.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "commandWindows": "__PERSONAL_MEMORY_HOOK_COMMAND__",
+            "command": "__PERSONAL_MEMORY_HOOK_COMMAND__",
+            "timeout": 5,
+            "additionalContextLimit": 1200
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "commandWindows": "__PERSONAL_MEMORY_HOOK_COMMAND__",
+            "command": "__PERSONAL_MEMORY_HOOK_COMMAND__",
+            "timeout": 5,
+            "statusMessage": "Reviewing durable memory"
+          }
+        ]
+      }
+    ]
+  }
+}
