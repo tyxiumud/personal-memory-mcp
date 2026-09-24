@@ -10,7 +10,7 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.11"
-dependencies = ["mcp>=1.26,<2", "pydantic>=2.12,<3"]
+dependencies = ["mcp>=1.26,<2", "pydantic>=2.13.5,<3"]
 keywords = ["mcp", "memory", "sqlite", "ai-agents", "local-first"]
 classifiers = [
   "Development Status :: 3 - Alpha",
