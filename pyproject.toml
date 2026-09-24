@@ -34,7 +34,7 @@ personal-memory = "personal_memory.cli:main"
 packages = ["src/personal_memory"]
 
 [dependency-groups]
-dev = ["pytest>=8,<10", "ruff>=0.12,<1", "pyyaml>=6,<7"]
+dev = ["pytest>=9.1.1,<10", "ruff>=0.12,<1", "pyyaml>=6,<7"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
