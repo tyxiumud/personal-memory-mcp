@@ -186,51 +186,103 @@ class MemoryStore:
             (memory.id, memory.revision, action, now(), document),
         )
 
-    def store(self, data: MemoryInput) -> dict:
-        memory = Memory(**data.model_dump())
+    @staticmethod
+    def _review_write(db, data: MemoryInput) -> dict:
+        """Conservative, deterministic preflight; never infer semantic equivalence."""
+        instant = now()
+        base = """SELECT document FROM memories WHERE forgotten_at IS NULL
+            AND scope=? AND scope_id IS ? AND kind=? AND valid_from<=?
+            AND (valid_to IS NULL OR valid_to>?)"""
+        params = (data.scope, data.scope_id, data.type, instant, instant)
+
+        def lookup(condition, *values):
+            row = db.execute(
+                f"{base} AND {condition} ORDER BY updated_at DESC LIMIT 1", (*params, *values)
+            ).fetchone()
+            return json.loads(row["document"]) if row else None
+
+        duplicate = lookup("title=? AND content=?", data.title, data.content)
+        if duplicate:
+            return {"disposition": "DROP", "reason": "exact_active_duplicate", "memory_id": duplicate["id"]}
+        source = data.source
+        if source.get("trigger") not in {"explicit", "autonomous"} or not source.get("client"):
+            return {"disposition": "DEFER", "reason": "missing_client_or_trigger", "memory_id": None}
+        if source["trigger"] == "autonomous" and not (source.get("evidence") or source.get("reference")):
+            return {"disposition": "DEFER", "reason": "missing_autonomous_evidence", "memory_id": None}
+        if data.supersedes is not None:
+            return {"disposition": "ACCEPT", "reason": "explicit_supersession", "memory_id": data.supersedes}
+        same_title = lookup("title=?", data.title)
+        if same_title:
+            return {"disposition": "DEFER", "reason": "same_title_different_content", "memory_id": same_title["id"]}
+        same_content = lookup("content=?", data.content)
+        if same_content:
+            return {"disposition": "MERGE", "reason": "same_content_different_title", "memory_id": same_content["id"]}
+        return {"disposition": "ACCEPT", "reason": "no_exact_conflict", "memory_id": None}
+
+    def review_write(self, data: MemoryInput) -> dict:
+        with self.read_connection() as db:
+            return self._review_write(db, data)
+
+    def store_reviewed(self, data: MemoryInput) -> dict:
+        """Review and commit in one write transaction; ambiguous proposals stay unwritten."""
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
-            if memory.supersedes is None:
-                instant = now()
-                duplicate = db.execute(
-                    """SELECT document FROM memories
-                    WHERE forgotten_at IS NULL AND scope=? AND scope_id IS ? AND kind=?
-                    AND title=? AND content=? AND valid_from<=?
-                    AND (valid_to IS NULL OR valid_to>?)
-                    ORDER BY updated_at DESC LIMIT 1""",
-                    (
-                        memory.scope,
-                        memory.scope_id,
-                        memory.type,
-                        memory.title,
-                        memory.content,
-                        instant,
-                        instant,
-                    ),
-                ).fetchone()
-                if duplicate is not None:
-                    existing = json.loads(duplicate["document"])
-                    existing["deduplicated"] = True
-                    return existing
-            if memory.supersedes:
-                old = self._get(db, memory.supersedes)
-                if db.execute(
-                    "SELECT 1 FROM memories WHERE json_extract(document,'$.supersedes')=?", (old.id,)
-                ).fetchone():
-                    raise ValueError("Memory already has a replacement; supersede the latest memory instead")
-                if old.forgotten_at:
-                    raise ValueError("Cannot supersede a forgotten memory")
-                if (old.scope, old.scope_id) != (memory.scope, memory.scope_id):
-                    raise ValueError("Supersession must remain in the same scope")
-                if memory.valid_from <= old.valid_from:
-                    raise ValueError("Replacement must start after the old memory's valid_from")
-                if old.valid_to is not None and memory.valid_from >= old.valid_to:
-                    raise ValueError("Old memory already expires before this replacement")
-                old.valid_to = memory.valid_from
-                old.updated_at = now()
-                old.revision += 1
-                self._write(db, old, "supersede")
-            self._write(db, memory, "store")
+            review = self._review_write(db, data)
+            if review["disposition"] == "DROP":
+                return review | {"written": False, "deduplicated": True}
+            if review["disposition"] != "ACCEPT":
+                return review | {"written": False}
+            memory = self._store_in_transaction(db, data)
+            return review | {"written": True, "memory": memory}
+
+    def store(self, data: MemoryInput) -> dict:
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            return self._store_in_transaction(db, data)
+
+    def _store_in_transaction(self, db, data: MemoryInput) -> dict:
+        memory = Memory(**data.model_dump())
+        if memory.supersedes is None:
+            instant = now()
+            duplicate = db.execute(
+                """SELECT document FROM memories
+                WHERE forgotten_at IS NULL AND scope=? AND scope_id IS ? AND kind=?
+                AND title=? AND content=? AND valid_from<=?
+                AND (valid_to IS NULL OR valid_to>?)
+                ORDER BY updated_at DESC LIMIT 1""",
+                (
+                    memory.scope,
+                    memory.scope_id,
+                    memory.type,
+                    memory.title,
+                    memory.content,
+                    instant,
+                    instant,
+                ),
+            ).fetchone()
+            if duplicate is not None:
+                existing = json.loads(duplicate["document"])
+                existing["deduplicated"] = True
+                return existing
+        if memory.supersedes:
+            old = self._get(db, memory.supersedes)
+            if db.execute(
+                "SELECT 1 FROM memories WHERE json_extract(document,'$.supersedes')=?", (old.id,)
+            ).fetchone():
+                raise ValueError("Memory already has a replacement; supersede the latest memory instead")
+            if old.forgotten_at:
+                raise ValueError("Cannot supersede a forgotten memory")
+            if (old.scope, old.scope_id) != (memory.scope, memory.scope_id):
+                raise ValueError("Supersession must remain in the same scope")
+            if memory.valid_from <= old.valid_from:
+                raise ValueError("Replacement must start after the old memory's valid_from")
+            if old.valid_to is not None and memory.valid_from >= old.valid_to:
+                raise ValueError("Old memory already expires before this replacement")
+            old.valid_to = memory.valid_from
+            old.updated_at = now()
+            old.revision += 1
+            self._write(db, old, "supersede")
+        self._write(db, memory, "store")
         return memory.model_dump()
 
     def update(self, memory_id: str, changes: dict, expected_revision: int) -> dict:
@@ -288,6 +340,46 @@ class MemoryStore:
     def search(self, selection: Search) -> list[dict]:
         """Backward-compatible record page; use search_detailed for diagnostics."""
         return self.search_detailed(selection)["memories"]
+
+    def assess_evidence(self, selection: Search, required_points: list[str]) -> dict:
+        """Check candidate coverage, never claim that lexical overlap proves a fact."""
+        if not 1 <= len(required_points) <= 10 or any(
+            not isinstance(point, str) or not point.strip() or len(point) > 500 for point in required_points
+        ):
+            raise ValueError("required_points must contain 1..10 nonblank strings of at most 500 characters")
+        result = self.search_detailed(selection)
+        records = result["memories"]
+        checks = []
+        for point in required_points:
+            needle = " ".join(point.casefold().split())
+            matching = [
+                record["id"]
+                for record in records
+                if needle in " ".join((record["title"] + " " + record["content"]).casefold().split())
+            ]
+            checks.append({"point": point, "candidate_ids": matching, "lexical_match": bool(matching)})
+        incomplete_page = result["retrieval"]["has_more_in_pool"] or result["retrieval"][
+            "candidate_limit_reached"
+        ]
+        if incomplete_page and any(not check["lexical_match"] for check in checks):
+            status = "incomplete_page"
+        elif not records or not any(check["lexical_match"] for check in checks):
+            status = "insufficient"
+        elif any(not check["lexical_match"] for check in checks):
+            status = "partial"
+        else:
+            status = "review_required"
+        return {
+            "status": status,
+            "checks": checks,
+            "candidate_ids": [record["id"] for record in records],
+            "candidate_pool_exhaustive": not incomplete_page,
+            "retrieval": result["retrieval"],
+            "notice": (
+                "Lexical coverage is a prompt for human/model verification, not proof that "
+                "the memory entails an answer. Inspect content, source and validity."
+            ),
+        }
 
     def _search(self, db, selection: Search, instant: str) -> dict:
         scoped_active = self._scoped_active(db, selection, instant)
@@ -599,6 +691,9 @@ class MemoryStore:
                 "fusion": f"rrf(k={retrieval.RRF_K})",
                 "candidates_per_query": retrieval.CANDIDATES_PER_QUERY,
                 "context_view": ["full", "compact"],
+                "reviewed_write": True,
+                "evidence_assessment": "lexical_candidates_only",
+                "project_identity": "git_origin_or_local_path_suggestion",
                 "embedding": False,
                 "hybrid_search": False,
                 "acl": "single-local-user; scopes are filters, not security boundaries",

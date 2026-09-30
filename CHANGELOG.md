@@ -4,6 +4,8 @@
 
 ## 未发布
 
+- 增加四态写入预审及原子审核写入、词面证据覆盖检查、Git origin 项目标识建议；
+  保留既有 scope 与 `memory_store` 行为，三端使用约定同步更新。
 - 项目正式采用 MIT License。
 - 普通写入的精确查重不再依赖 `source.trigger`；auto 宽松回退成功时明确报告
   `retrieval.strategy=relaxed`。

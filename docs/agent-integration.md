@@ -25,6 +25,10 @@ scope_id  = project:personal-memory
 `scope` 与 `scope_id` 是两个字段。scope 是分类过滤，不是权限控制；不要把两者再次拼接成
 `project:project:personal-memory`。处理其他项目时，应使用该项目稳定的 scope_id。
 
+新项目可以向 `memory_project_identity` 传入明确的本地目录，取得基于规范化 Git origin 的建议标识；
+没有 origin 时回退到本机绝对路径。返回值只是建议，不会迁移已有记录。本仓库继续使用上面的既有标识，
+避免把同一项目分裂成两个 scope。
+
 任务范围不明确或发生切换时，先调用 `memory_status` 查看 scopes 清单，再选择范围。知道某个范围存在，
 不表示应该读取其中所有记录。
 

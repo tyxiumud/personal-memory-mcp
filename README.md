@@ -96,8 +96,18 @@ type 支持 profile / preference / fact / episodic / decision。每条记录包�
 | memory_forget | memory_id、expected_revision；软删除，退出所有检索，历史仍保留 |
 | memory_history | memory_id、limit、offset；按修订倒序返回完整快照，包括已遗忘记录 |
 | memory_status | 无参数；数据库路径、schema、数量、能力状态，以及 `scopes` 范围清单与统计使用的 `as_of` |
+| memory_review_write | `memory` 对象；只读预审，返回 ACCEPT / MERGE / DROP / DEFER，不写库 |
+| memory_store_reviewed | `memory` 对象；同一事务中预审，只有 ACCEPT 写入；其余状态不写入 |
+| memory_assess | `selection` 与 `required_points`；报告每个要点的词面候选与检索诊断 |
+| memory_project_identity | `project_path`；由 Git origin 生成稳定项目标识，无 origin 时按本机路径生成 |
 
-写入示例（memory_store）：
+新写入建议使用 `memory_store_reviewed`：`DROP` 是同范围、同类型、标题和正文完全相同；`MERGE` 是正文相同而标题不同，需人工决定是否修改旧记录；`DEFER` 是缺少写入来源、自动写入缺少证据，或同标题出现不同正文。`ACCEPT` 才写库。这个判断只识别可验证的精确关系，不做语义近似合并。原 `memory_store` 保留兼容性和明确纠错流程，客户端应先查重并核对来源。
+
+`memory_assess` 的 `insufficient` / `partial` 提醒不要仅凭现有记忆回答全部要点；`incomplete_page` 表示当前页或候选上限无法覆盖全部记录；`review_required` 表示找到了词面候选，仍须核对正文、来源、时效和是否真的支持结论。它不会把关键词重合当成事实证明。
+
+`memory_project_identity` 返回建议的 `scope_id`，不会改写既有记忆。本仓库已经约定使用 `project:personal-memory`，应继续沿用；新项目可在三端约定生成的同一标识。没有 Git origin 时，本机路径生成的标识不保证跨机器一致。
+
+审核写入示例（`memory_store_reviewed`；`memory_review_write` 接收同样的参数，但只预览）：
 
 ```json
 {
@@ -109,10 +119,23 @@ type 支持 profile / preference / fact / episodic / decision。每条记录包�
     "type": "decision",
     "confidence": 1.0,
     "importance": 0.8,
-    "source": {"kind": "conversation", "client": "codex", "trigger": "explicit", "reference": "replace-with-real-source"}
+    "source": {"kind": "conversation", "client": "codex", "trigger": "explicit", "evidence": "replace-with-real-user-confirmation"}
   }
 }
 ```
+
+返回 `written=true` 且 `disposition=ACCEPT` 才表示产生了新记录。`DROP` 会给出已存在的 `memory_id`；
+`MERGE` 和 `DEFER` 不写入，需检查返回的原因及相应旧记录。四态预审只覆盖精确正文、标题冲突和来源字段，
+不能发现语义相近的重复或验证 `source.evidence` 的真实性。
+
+回答前的证据检查示例：
+
+```json
+{"selection":{"query":"SQLite","scope":"project","scope_id":"project:personal-memory","include_global":true},"required_points":["使用 SQLite","数据可审计"]}
+```
+
+调用 `memory_assess` 后，逐项查看 `checks[].candidate_ids`，再用 `memory_search` 阅读正文和来源。
+`status=review_required` 仍需人工或模型判断记忆是否真正支持回答；结果受 `selection.limit` 和检索方式约束。
 
 查询示例（memory_search / memory_context）：
 

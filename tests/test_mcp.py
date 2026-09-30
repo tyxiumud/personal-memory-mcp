@@ -24,6 +24,10 @@ def test_real_stdio_all_tools(tmp_path):
                 "memory_forget",
                 "memory_history",
                 "memory_status",
+                "memory_assess",
+                "memory_review_write",
+                "memory_store_reviewed",
+                "memory_project_identity",
             }
 
             async def call(name, arguments):
@@ -42,6 +46,23 @@ def test_real_stdio_all_tools(tmp_path):
                     }
                 },
             )
+            preview = await call(
+                "memory_review_write",
+                {
+                    "memory": {
+                        "title": "语言偏好",
+                        "content": "用户喜欢中文交流",
+                        "type": "preference",
+                        "source": {"client": "integration-test", "trigger": "explicit"},
+                    }
+                },
+            )
+            assert preview["disposition"] == "DROP"
+            assessment = await call(
+                "memory_assess",
+                {"selection": {"query": "中文"}, "required_points": ["用户喜欢中文交流"]},
+            )
+            assert assessment["status"] == "review_required"
             found = await call("memory_search", {"selection": {"query": "中文"}})
             assert found["memories"][0]["id"] == record["id"]
             context = await call("memory_context", {"selection": {}})

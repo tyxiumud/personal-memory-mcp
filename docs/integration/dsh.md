@@ -19,3 +19,6 @@ npx -y @deepseek-ai/dsh --profile web
 
 接入后先调用 `memory_status`、`memory_context` 和 `memory_search` 做只读验收，再用一条可删除的测试
 记忆验证跨客户端读写。独立启动 MCP 进程成功，不等于 DSH 的真实模型会话已经加载工具。
+
+新记忆优先调用 `memory_store_reviewed`，只有 `ACCEPT` 会写入；`MERGE` / `DEFER` 要核对来源和旧记录。
+跨多个事实点回答时可调用 `memory_assess`，但它只检查词面候选，仍需阅读记忆正文判断是否支持结论。

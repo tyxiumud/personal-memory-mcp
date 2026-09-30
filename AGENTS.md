@@ -43,6 +43,11 @@ integrations unless requested.
   autonomous; add evidence, session/thread reference, and current commit when known.
 - Search before storing to avoid duplicates. Use expected_revision on corrections. A changed fact
   uses a new record with supersedes; soft forget retains historical content.
+- For new records prefer memory_store_reviewed. ACCEPT writes, DROP identifies an exact duplicate,
+  and MERGE/DEFER require inspecting the existing record or provenance before any further action.
+  memory_assess reports lexical candidate coverage only; inspect the actual records before answering.
+- memory_project_identity offers a Git-origin-based scope for new projects. Keep this repository's
+  established project:personal-memory scope; the tool never migrates existing records.
 - Never claim a write or test happened unless its tool returned success. Model/client identity in
   source is provenance metadata, not authenticated identity or ACL.
 

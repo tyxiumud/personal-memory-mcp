@@ -4,6 +4,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
 from .models import ContextView, MemoryInput, Search
+from .project_identity import project_identity
 from .store import MemoryStore
 
 
@@ -24,7 +25,9 @@ def create_server(store: MemoryStore) -> FastMCP:
             "Support two write modes: an explicit user request to remember, record, correct, or "
             "forget must be handled immediately; otherwise autonomously store only confirmed, "
             "durable, future-useful preferences, facts, decisions, milestones, or blockers, keeping "
-            "each record atomic and searches sparse. Search before storing and set source.client plus "
+            "each record atomic and searches sparse. Prefer memory_store_reviewed for new writes; "
+            "MERGE and DEFER need review. memory_assess checks lexical evidence coverage but cannot "
+            "prove a claim. Search before storing and set source.client plus "
             "source.trigger ('explicit' or 'autonomous') and evidence when available. "
             "Do not store secrets, speculation, raw chat/tool logs, or transient details. "
             "Use history to inspect revisions before update or forget; a changed fact uses supersedes, "
@@ -104,6 +107,43 @@ def create_server(store: MemoryStore) -> FastMCP:
         view="compact", max_chars=6000, limit=8.
         """
         return store.context(selection, max_chars, view)
+
+    @server.tool(annotations=read)
+    def memory_assess(selection: Search, required_points: list[str]) -> dict:
+        """Check which requested points have lexical candidates in the selected scope.
+
+        insufficient or partial means memory alone cannot support every point. A complete
+        lexical match still returns review_required: wording overlap does not prove entailment.
+        Inspect the candidate records and their sources before answering.
+        """
+        return store.assess_evidence(selection, required_points)
+
+    @server.tool(annotations=read)
+    def memory_review_write(memory: MemoryInput) -> dict:
+        """Preview ACCEPT, MERGE, DROP or DEFER without writing.
+
+        MERGE identifies identical content under another title; it does not merge automatically.
+        DEFER requires a person/model to resolve missing provenance or a same-title conflict.
+        """
+        return store.review_write(memory)
+
+    @server.tool(annotations=write)
+    def memory_store_reviewed(memory: MemoryInput) -> dict:
+        """Atomically review a proposal and write only when disposition is ACCEPT.
+
+        DROP returns the existing ID. MERGE and DEFER leave the database unchanged.
+        Legacy memory_store remains available for explicit corrections and compatibility.
+        """
+        return store.store_reviewed(memory)
+
+    @server.tool(annotations=read)
+    def memory_project_identity(project_path: str) -> dict:
+        """Suggest a stable project scope from Git origin, falling back to the local path.
+
+        Supply an existing directory explicitly. The suggestion does not migrate earlier
+        user-chosen scope IDs; keep using those until a deliberate migration is done.
+        """
+        return project_identity(project_path)
 
     @server.tool(annotations=write)
     def memory_store(memory: MemoryInput) -> dict:

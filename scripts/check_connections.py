@@ -22,6 +22,10 @@ EXPECTED_TOOLS = {
     "memory_forget",
     "memory_history",
     "memory_status",
+    "memory_assess",
+    "memory_review_write",
+    "memory_store_reviewed",
+    "memory_project_identity",
 }
 EXAMPLES = {
     "codex": ROOT / "examples/codex.config.toml",

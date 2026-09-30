@@ -38,6 +38,8 @@ confidence 是来源与写入者的判断。
 
 写前在目标 scope 搜索。一次有意义的轮次通常最多写 1-3 条原子记忆；变化事实用 supersedes，
 纠错先查 history 并使用 expected_revision。精确重复直接跳过，不要用 supersedes 去重。
+新记录优先用 memory_store_reviewed；只有 ACCEPT 表示已写入，MERGE/DEFER 需进一步核对。
+涉及多个事实点时可用 memory_assess 检查候选覆盖，但仍要阅读记录判断证据是否真的支持回答。
 source.client=workbuddy，source.trigger 标记 explicit 或 autonomous，并尽量写 evidence/会话引用。
 禁止保存秘密、凭据、推测、原始聊天/工具日志、临时细节或能从仓库轻易重读的代码事实。
 只有工具成功返回后才能声称已写入；发现互相矛盾的记录时展示来源与时间，不要只按更新时间覆盖。
