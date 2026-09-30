@@ -11,7 +11,8 @@ src/personal_memory/
     models.py      数据模型与参数校验
     store.py       SQLite、FTS5、范围过滤、检索诊断
     retrieval.py   RRF 融合、宽松回退、compact 投影
-    server.py      七个 MCP 工具
+    server.py      十一个 MCP 工具
+    project_identity.py  Git origin / 本机路径的项目标识建议
     cli.py         status / serve / export / import / import-note
     archive.py     JSON 与 Markdown 归档
     extensions.py  尚未启用的扩展 Protocol

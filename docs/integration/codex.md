@@ -13,7 +13,7 @@ Codex 的 MCP 服务仍由项目虚拟环境启动；Hook 则使用 Windows Pyth
 ASCII 路径副本。这两条运行链路用途不同，不应互相替换。
 
 `UserPromptSubmit` 只注入读取与写入纪律，`Stop` 在结束前要求一次复核并防止循环。Hook 不会把整段
-聊天自动发送给数据库，真正的记忆写入仍必须表现为一次 `memory_store`、`memory_update` 或
+聊天自动发送给数据库，真正的记忆写入仍必须表现为一次 `memory_store_reviewed`、`memory_store`、`memory_update` 或
 `memory_forget` 工具调用。
 
 验收顺序：
