@@ -9,8 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 Scope = Literal["global", "project", "domain"]
 Kind = Literal["profile", "preference", "fact", "episodic", "decision"]
 ContextView = Literal["full", "compact"]
-# "strict" keeps the historical keyword behaviour and stays the default. "auto" may run one
-# bounded relaxed pass when the strict candidate pool is empty; see retrieval.py.
+# "strict" stays the default and may mark a narrowly pruned Chinese compound. "auto" may
+# run one bounded relaxed pass when that candidate pool is empty; see retrieval.py.
 SearchMode = Literal["strict", "auto"]
 Text = Annotated[str, Field(min_length=1, max_length=100_000)]
 

@@ -3,13 +3,13 @@
 This script never opens the production database: fixture regression and real-library
 inspection are deliberately separate jobs (see scripts/audit_memory.py for the latter).
 
-Reported configurations, from what a client does today to the candidate v0.3 behaviour:
+Reported configurations, from a raw question to the available keyword and auto paths:
 
 * question_baseline  - the natural-language question sent as-is, strict keywords
 * baseline           - the same keywords the improved path uses, but no fusion
 * strict_variants    - query + query_variants with RRF (the v0.2 recommendation)
 * auto_keywords_only - search_mode="auto" with the raw phrase and no variants
-* auto_with_variants - search_mode="auto" with the keywords (candidate v0.3 recommendation)
+* auto_with_variants - search_mode="auto" with the keywords (candidate discovery)
 
 Cases are split by how they were used, and the split is stated in the report:
 
@@ -23,6 +23,7 @@ Cases are split by how they were used, and the split is stated in the report:
 import argparse
 import json
 import sys
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -46,7 +47,7 @@ CONFIGURATIONS = (
     ("baseline", "关键词（严格，无 variants）"),
     ("improved", "关键词 + variants（严格，v0.2 推荐）"),
     ("auto_keywords_only", "原文 + auto（无 variants）"),
-    ("auto_with_variants", "关键词 + variants + auto（v0.3 候选）"),
+    ("auto_with_variants", "关键词 + variants + auto（候选发现）"),
 )
 
 
@@ -168,23 +169,25 @@ def compact_section(store, selection, budget: int) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--out", type=Path, default=ROOT / "outputs" / "v0.3-report.md")
+    parser.add_argument("--out", type=Path, default=ROOT / "outputs" / "retrieval-report.md")
     args = parser.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
     fixture = load_fixture()
-    fixture_db = ROOT / "outputs" / "eval-fixture.sqlite3"
-    if fixture_db.exists():
-        fixture_db.unlink()
-    store = build_store(fixture_db, fixture)
-    results = evaluate(store, fixture)
+    # Do not overwrite a previous ignored fixture database when saving a new report.
+    with tempfile.TemporaryDirectory(prefix="personal-memory-eval-") as temporary:
+        store = build_store(Path(temporary) / "eval-fixture.sqlite3", fixture)
+        results = evaluate(store, fixture)
+        compact_lines = compact_section(
+            store, Search(scope="project", scope_id="project:personal-memory", include_global=True, limit=20), 6000
+        )
 
     tuning = sum(1 for case in fixture["cases"] if case["set"] == "tuning")
     development = sum(1 for case in fixture["cases"] if case["set"] == "development")
     validation = sum(1 for case in fixture["cases"] if case["set"] == "validation")
     lines = [
-        "# Personal Memory MCP v0.3 检索验收报告",
+        "# Personal Memory MCP 检索回归报告",
         "",
         f"生成时间：{datetime.now(UTC).isoformat(timespec='seconds')}",
         "",
@@ -225,12 +228,12 @@ def main() -> int:
     lines += before_after_table(results, "development")
     lines += rebuild_cases(results, "development")
     lines += before_after_table(results, "tuning")
-    lines += compact_section(store, Search(scope="project", scope_id="project:personal-memory", include_global=True, limit=20), 6000)
+    lines += compact_lines
     lines += [
         "## 局限",
         "",
         "- 全部为词法匹配：宽松回退用 OR 召回候选并按片段覆盖筛选，仍然不是语义检索。",
-        "- 严格模式仍是默认值；auto 只改变候选池为空时的行为，不改变已有命中。",
+        "- 严格模式仍是默认值；短中文词组可能采用带标记的中间片段剪除；auto 只在候选池为空时回退。",
         "- 分页越界、范围为空都不触发回退，避免把分页问题伪装成关键词问题。",
         "- 无答案用例的“首条正确”定义为返回空；这不是“永不返回空”的验收目标。",
         (
@@ -246,7 +249,7 @@ def main() -> int:
         "",
     ]
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    args.out.write_text("\n".join(lines).rstrip("\n") + "\n", encoding="utf-8")
 
     print(
         json.dumps(

@@ -35,7 +35,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from personal_memory.cli import default_db
 from personal_memory.models import Search, now
 from personal_memory.retrieval import SOURCE_SUMMARY_KEYS, VERBATIM_SOURCE_KEYS
-from personal_memory.store import match_expression, scoped_filters
+from personal_memory.store import scoped_filters, strict_match_expression
 
 # Provenance fields worth tracking; anything else found in `source` is reported as an
 # unknown key rather than being silently ignored.
@@ -207,7 +207,7 @@ def _query_counts(db: sqlite3.Connection, selection: Search, query: str, instant
     scoped_active = db.execute(
         f"SELECT count(*) FROM memories m WHERE {' AND '.join(clauses)}", args
     ).fetchone()[0]
-    expression = match_expression(query)
+    expression, dropped = strict_match_expression(db, selection, query, instant, scoped_active)
     if query.strip() and not expression:
         candidate_pool = 0
     else:
@@ -234,6 +234,7 @@ def _query_counts(db: sqlite3.Connection, selection: Search, query: str, instant
         "candidate_pool": candidate_pool,
         "returned": returned,
         "reason": reason,
+        "strict_dropped_fragments": dropped,
     }
 
 

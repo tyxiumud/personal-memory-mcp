@@ -117,8 +117,8 @@ uv run --locked python scripts/render_client_configs.py $configDir
 | 为什么这样设计、哪些能力暂不做 | [设计理念](docs/philosophy.md) |
 | 数据如何存储、检索和修订 | [架构](docs/architecture.md) |
 | 什么值得记、客户端何时读写 | [记忆工作流](docs/memory-workflow.md) · [Agent 接入](docs/agent-integration.md) |
-| 评测指标能说明什么 | [评测口径](docs/evaluation.md) |
-| 版本记录与后续提案 | [变更记录](CHANGELOG.md) · [v0.4 候选计划](docs/v0.4-plan.md) |
+| 评测指标能说明什么 | [评测口径](docs/evaluation.md) · [v0.4 实验记录](docs/v0.4-experiment.md) |
+| 版本记录与后续提案 | [变更记录](CHANGELOG.md) · [v0.4 计划与状态](docs/v0.4-plan.md) |
 | 贡献与安全边界 | [贡献指南](CONTRIBUTING.md) · [安全策略](SECURITY.md) |
 
 ## 开发与验证

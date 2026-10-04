@@ -1,7 +1,7 @@
 """search_mode: strict stays the default, auto adds one bounded relaxed pass.
 
-The relaxed pass exists because a phrase whose words are never adjacent in the text
-("投资偏好" against "投资背景与分析偏好") makes the strict AND expression return nothing.
+The relaxed pass exists because long phrases whose words are never adjacent in the text
+can make the strict AND expression return nothing.
 It must widen recall without becoming "return everything": the rules that keep it in check
 are covered here, together with the guarantee that it never changes a strict hit.
 """
@@ -24,8 +24,8 @@ from personal_memory.retrieval import (
 )
 from personal_memory.store import MemoryStore
 
-PHRASE = "投资偏好"
-FRAGMENTS = ["投资", "资偏", "偏好"]
+PHRASE = "个人投资偏好"
+FRAGMENTS = ["个人", "人投", "投资", "资偏", "偏好"]
 # The middle bigram spans two words that never touch in the text, so it matches nothing.
 IMPOSSIBLE_FRAGMENT = "资偏"
 
@@ -109,7 +109,7 @@ def test_auto_recovers_a_phrase_whose_words_are_not_adjacent(store):
     assert fallback["trigger_reason"] == "empty_candidate_pool"
     # The impossible middle bigram is reported rather than silently distorting coverage, and
     # the used fragment list contains only the ones actually searched for.
-    assert fallback["dropped_unmatched_fragments"] == [IMPOSSIBLE_FRAGMENT]
+    assert IMPOSSIBLE_FRAGMENT in fallback["dropped_unmatched_fragments"]
     assert fallback["fragments_generated"] == len(FRAGMENTS)
     assert fallback["fragments"] == ["投资", "偏好"]
     assert fallback["dropped_by_cap_fragments"] == []

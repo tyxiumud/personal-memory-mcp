@@ -93,8 +93,8 @@ COMPACT_FIELDS = (
 
 # --- Relaxed fallback (search_mode="auto") -------------------------------------------
 #
-# Purpose: a phrase whose words never appear next to each other in the text ("投资偏好"
-# against "投资背景与分析偏好") makes the strict AND expression return nothing. The fallback
+# Purpose: long phrases whose words never appear next to each other in the text can still
+# make the strict AND expression return nothing. The fallback
 # recalls candidates with OR over the same fragments, then filters and ranks them instead of
 # returning every OR hit. It adds no model, embedding or tokenizer dependency.
 #

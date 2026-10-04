@@ -59,8 +59,8 @@ def query_fragments(text: str) -> list[str]:
     """Keyword fragments of one query: CJK single characters and bigrams, ASCII words.
 
     Order is preserved and duplicates are dropped. The bigram spanning two adjacent query
-    words that never touch in the text is harmless under OR recall, but it is exactly what
-    makes the strict AND expression return nothing.
+    words that never touch in the text is harmless under OR recall, but can make the strict
+    AND expression return nothing when the narrow short-compound rule does not apply.
     """
     terms: list[str] = []
     for word in re.findall(r"[\u3400-\u9fff]+|[^\W_]+", text, re.UNICODE):
@@ -99,6 +99,45 @@ def scoped_filters(selection: Search, instant: str) -> tuple[list[str], list]:
         clauses.append("m.kind=?")
         args.append(selection.type)
     return clauses, args
+
+
+def match_count(db, selection: Search, expression: str, instant: str) -> int:
+    """Count FTS matches inside the exact scope/type/validity/forgotten filters."""
+    clauses, args = scoped_filters(selection, instant)
+    clauses.append("memory_fts MATCH ?")
+    args.append(expression)
+    sql = (
+        "SELECT count(*) FROM memories m JOIN memory_fts ON memory_fts.rowid=m.rowid"
+        f" WHERE {' AND '.join(clauses)}"
+    )
+    return db.execute(sql, args).fetchone()[0]
+
+
+def strict_match_expression(
+    db, selection: Search, query: str, instant: str, scoped_active: int
+) -> tuple[str, list[str]]:
+    """FTS expression and any discarded short-compound gap, reusable by read-only audit."""
+    expression = match_expression(query)
+    phrase = query.strip()
+    if not (
+        expression
+        and re.fullmatch(r"[\u3400-\u9fff]{4,5}", phrase)
+        and match_count(db, selection, expression, instant) == 0
+    ):
+        return expression, []
+    fragments = query_fragments(phrase)
+    frequencies = {fragment: match_count(db, selection, quoted(fragment), instant) for fragment in fragments}
+    generic = set(retrieval.generic_fragments(frequencies, scoped_active))
+    if not (
+        frequencies[fragments[0]] > 0
+        and frequencies[fragments[-1]] > 0
+        and (fragments[0] not in generic or fragments[-1] not in generic)
+    ):
+        return expression, []
+    dropped = [fragment for fragment in fragments[1:-1] if frequencies[fragment] == 0]
+    if not dropped:
+        return expression, []
+    return " AND ".join(quoted(fragment) for fragment in fragments if fragment not in dropped), dropped
 
 
 class MemoryStore:
@@ -389,14 +428,16 @@ class MemoryStore:
             )
         )
         per_query_matches = None
+        strict_dropped_fragments = []
         candidate_limit_reached = False
         if selection.query_variants:
             ranked = []
             per_query_matches = []
             for query in queries:
-                rows, total = self._ranked_candidates(
+                rows, total, dropped = self._ranked_candidates(
                     db, selection, query, retrieval.CANDIDATES_PER_QUERY, 0, instant, scoped_active
                 )
+                strict_dropped_fragments.extend(dropped)
                 per_query_matches.append(total)
                 candidate_limit_reached = candidate_limit_reached or total > retrieval.CANDIDATES_PER_QUERY
                 ranked.append(rows)
@@ -407,10 +448,14 @@ class MemoryStore:
             # carries the exact per-query numbers instead of guessing a total.
             total_matches = None
         else:
-            page, candidate_pool = self._ranked_candidates(
+            page, candidate_pool, strict_dropped_fragments = self._ranked_candidates(
                 db, selection, selection.query, selection.limit, selection.offset, instant, scoped_active
             )
-            strategy = "strict" if selection.query.strip() else "browse"
+            strategy = (
+                "strict_pruned"
+                if strict_dropped_fragments
+                else "strict" if selection.query.strip() else "browse"
+            )
             total_matches = candidate_pool
         returned = len(page)
         if scoped_active == 0:
@@ -445,6 +490,7 @@ class MemoryStore:
             "scoped_active": scoped_active,
             "total_matches": total_matches,
             "per_query_matches": per_query_matches,
+            "strict_dropped_fragments": list(dict.fromkeys(strict_dropped_fragments)),
             "candidate_pool": candidate_pool,
             "candidate_limit_reached": candidate_limit_reached,
             "returned": returned,
@@ -550,14 +596,7 @@ class MemoryStore:
 
     def _match_count(self, db, selection: Search, expression: str, instant: str) -> int:
         """Exact FTS match count inside the filtered scope; never reduced by pagination."""
-        clauses, args = scoped_filters(selection, instant)
-        clauses.append("memory_fts MATCH ?")
-        args.append(expression)
-        sql = (
-            "SELECT count(*) FROM memories m JOIN memory_fts ON memory_fts.rowid=m.rowid"
-            f" WHERE {' AND '.join(clauses)}"
-        )
-        return db.execute(sql, args).fetchone()[0]
+        return match_count(db, selection, expression, instant)
 
     def _ranked_candidates(
         self,
@@ -568,11 +607,11 @@ class MemoryStore:
         offset: int,
         instant: str,
         scoped_active: int,
-    ) -> tuple[list[dict], int]:
+    ) -> tuple[list[dict], int, list[str]]:
         """One strict FTS page plus its exact match count, on the caller's connection."""
-        expression = match_expression(query)
+        expression, dropped = strict_match_expression(db, selection, query, instant, scoped_active)
         if query.strip() and not expression:
-            return [], 0
+            return [], 0, []
         clauses, args = scoped_filters(selection, instant)
         join = ""
         order = "m.importance DESC,m.confidence DESC,m.updated_at DESC,m.id"
@@ -588,7 +627,9 @@ class MemoryStore:
             f" ORDER BY {order} LIMIT ? OFFSET ?"
         )
         rows = [json.loads(row[0]) for row in db.execute(sql, [*args, limit, offset])]
-        return rows, total
+        if dropped:
+            rows = [record | {"match_quality": "pruned"} for record in rows]
+        return rows, total, dropped
 
     def context(self, selection: Search, max_chars: int = 12000, view: ContextView = "full") -> dict:
         """Bounded context. ``retrieval.returned`` is pre-budget; ``omitted_from_page`` is

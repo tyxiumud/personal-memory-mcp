@@ -45,7 +45,11 @@
 
 `memory_search` 的 `selection` 支持 `query`、最多 5 个 `query_variants`、范围、类型、`as_of`、分页与 `search_mode`。中文额外索引单字和双字；英文按 FTS5 词项匹配。每路严格查询取 AND，多个查询的结果按 RRF 合并；变体必须来自问题或已知背景，不能为了命中而编造。
 
-默认 `search_mode="strict"`。`auto` 先跑严格检索，只在没有候选且未跳页时进行一次受限的宽松召回。宽松结果标记 `match_quality="relaxed"`，只是待核对候选。问密码、日期、编号等具体事实时，应使用严格检索加关键词变体；宽松命中不能直接当答案。
+默认 `search_mode="strict"`。严格路径对 4～5 字中文短词组可剪除零频的中间跨词片段；
+`retrieval.strategy="strict_pruned"`、`strict_dropped_fragments` 与记录的 `match_quality="pruned"`
+会明示此事，多路查询仍显示 `rrf_variants`。剪除结果也是待核对候选，不等于完整词组确曾出现。
+`auto` 只在没有候选且未跳页时进行一次受限的宽松召回；其结果标记 `match_quality="relaxed"`。
+问密码、日期、编号等具体事实时，应使用严格检索加关键词变体；剪除或宽松命中都不能直接当答案。
 
 搜索和上下文都返回 `retrieval`。常见的 `reason` 包括：
 

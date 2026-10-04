@@ -167,6 +167,7 @@ def test_detail_reports_positions_not_identities(populated):
         Search(query="稳健"),
         Search(query="量子计算"),
         Search(query="投资", scope="project", scope_id="demo"),
+        Search(query="投资偏好", scope="project", scope_id="demo", include_global=False),
         Search(query="稳健", scope="project", scope_id="absent"),
         Search(query="稳健", type="preference"),
         Search(query="稳健", limit=1, offset=1),
@@ -187,6 +188,7 @@ def test_audit_diagnostics_match_the_store_rule(populated, selection):
     assert mine["candidate_pool"] == theirs["candidate_pool"]
     assert mine["reason"] == theirs["reason"]
     assert mine["returned"] == theirs["returned"]
+    assert mine["strict_dropped_fragments"] == theirs["strict_dropped_fragments"]
 
 
 def test_audit_reports_a_scope_whose_records_are_all_forgotten(populated):

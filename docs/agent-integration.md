@@ -86,6 +86,8 @@ scope_id  = project:personal-memory
 
 `scoped_active` 是 FTS 前的范围记录数；`candidate_pool` 是当前策略收集的候选池。多路查询的精确数量
 看 `per_query_matches`。达到候选上限时，池大小只是下限，不应被解释成总匹配数。
+短中文词组可能剪除零频的中间片段；此时看 `strict_dropped_fragments` 和记录的
+`match_quality="pruned"`。它是近似词面候选，须核对正文是否真的回答问题。
 
 `search_mode="auto"` 是候选发现模式，不是可靠事实答案。返回记录带
 `match_quality="relaxed"`；只有记录正文直接回答问题时才能引用。对于密码、账号、证件、日期和编号
